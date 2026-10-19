@@ -1,0 +1,9 @@
+# Binaries
+program
+nbody
+pth_std
+pth_custom
+*.exe
+*.out
+*.o
+*.obj

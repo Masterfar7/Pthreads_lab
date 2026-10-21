@@ -3,23 +3,14 @@
 
 #include <pthread.h>
 
-/*
- * Структура блокировки чтения-записи (в точности по методичке разд. 2.3.2):
- * - Мьютекс
- * - Две условные переменные (для читателей и для писателей)
- * - Счетчик читателей (сколько сейчас читают)
- * - Счетчик читателей, ожидающих блокировки
- * - Счетчик писателей, ожидающих блокировки
- * - Флаг активного писателя (занята ли блокировка писателем)
- */
 typedef struct {
     pthread_mutex_t mutex;
     pthread_cond_t read_cond;
     pthread_cond_t write_cond;
-    int readers;          /* Текущее число активных читателей */
-    int readers_waiting;  /* Читатели в очереди ожидания */
-    int writers_waiting;  /* Писатели в очереди ожидания */
-    int writer_active;    /* 1 если есть активный писатель, иначе 0 */
+    int readers;
+    int readers_waiting;
+    int writers_waiting;
+    int writer_active;
 } my_rwlock_t;
 
 int my_rwlock_init(my_rwlock_t *rw);

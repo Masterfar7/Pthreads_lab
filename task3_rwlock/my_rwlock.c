@@ -25,7 +25,6 @@ int my_rwlock_rdlock(my_rwlock_t* rw) {
     pthread_mutex_lock(&rw->mutex);
 
     rw->readers_waiting++;
-    /* Цикл while для защиты от spurious wakeup (Семинар 3) */
     while (rw->writer_active || rw->writers_waiting > 0) {
         pthread_cond_wait(&rw->read_cond, &rw->mutex);
     }
@@ -41,7 +40,6 @@ int my_rwlock_wrlock(my_rwlock_t* rw) {
     pthread_mutex_lock(&rw->mutex);
 
     rw->writers_waiting++;
-    /* Ждем, пока освободятся читатели и другие писатели */
     while (rw->writer_active || rw->readers > 0) {
         pthread_cond_wait(&rw->write_cond, &rw->mutex);
     }
@@ -62,7 +60,6 @@ int my_rwlock_unlock(my_rwlock_t* rw) {
         rw->readers--;
     }
 
-    /* Приоритет писателям для избежания голодания */
     if (rw->readers == 0 && rw->writers_waiting > 0) {
         pthread_cond_signal(&rw->write_cond);
     } else if (rw->writers_waiting == 0 && rw->readers_waiting > 0) {
